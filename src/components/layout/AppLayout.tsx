@@ -1,44 +1,58 @@
-import { NavLink, Outlet } from "react-router";
+import { Link } from "react-router";
+import { logout } from "../../features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import styles from "./AppLayout.module.css";
+import { selectIsAuthenticated, selectUserName } from "../../features/auth/authSelectors";
 
-function AppLayout() {
+type Props = {
+  children: React.ReactNode;
+};
+
+function AppLayout({ children }: Props) {
+  const dispatch = useAppDispatch();
+
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const userName = useAppSelector(selectUserName);
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Member Enrollment App</h1>
+        <div className={styles.headerTopRow}>
+          <h2 className={styles.title}>Member Enrollment App</h2>
+
+          <div className={styles.userSection}>
+            <span className={styles.userStatus}>
+              {isAuthenticated
+                ? `Logged in as ${userName}`
+                : "Not logged in"}
+            </span>
+
+            {isAuthenticated && (
+              <button className={styles.logoutButton} onClick={handleLogout}>
+                Logout
+              </button>
+            )}
+          </div>
+        </div>
       </header>
 
-      <nav className={styles.nav} aria-label="Primary">
-        <NavLink
-          to="/"
-          end
-          className={({ isActive }) =>
-            isActive ? `${styles.link} ${styles.linkActive}` : styles.link
-          }
-        >
+      <nav className={styles.nav}>
+        <Link className={styles.link} to="/">
           Dashboard
-        </NavLink>
-        <NavLink
-          to="/members"
-          className={({ isActive }) =>
-            isActive ? `${styles.link} ${styles.linkActive}` : styles.link
-          }
-        >
+        </Link>
+        <Link className={styles.link} to="/members">
           Members
-        </NavLink>
-        <NavLink
-          to="/enrollment"
-          className={({ isActive }) =>
-            isActive ? `${styles.link} ${styles.linkActive}` : styles.link
-          }
-        >
+        </Link>
+        <Link className={styles.link} to="/enrollment">
           New Enrollment
-        </NavLink>
+        </Link>
       </nav>
 
-      <main className={styles.main}>
-        <Outlet />
-      </main>
+      <main className={styles.main}>{children}</main>
     </div>
   );
 }

@@ -1,14 +1,13 @@
 import { login, logout } from "../../auth/authSlice";
 import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
 import styles from "./DashboardPage.module.css";
+import { selectIsAuthenticated, selectUserName } from "../../auth/authSelectors";
 
 function DashboardPage() {
   const dispatch = useAppDispatch();
 
-  const isAuthenticated = useAppSelector(
-    (state) => state.auth.isAuthenticated
-  );
-  const userName = useAppSelector((state) => state.auth.userName);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const userName = useAppSelector(selectUserName);
 
   const handleLogin = () => {
     dispatch(login("Srinivas"));
